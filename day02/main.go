@@ -31,19 +31,39 @@ func (g *Game) is_valid(mh Hand) bool{
 
 func main() {
     maxHand := Hand{13,12,14}
-    input, err := os.Open("./input")
-    if err != nil{
-        fmt.Println("Error reading file")
-    }
+    input, _ := os.Open("./input")
     defer input.Close()
-    res, err := day02(maxHand, input)
-    if err != nil{
-        fmt.Println("Error")
-    }
+    res, _ := day02(maxHand, input)
     fmt.Println(res)
-    fmt.Println("exit")
+    i2, _ := os.Open("./input")
+    defer i2.Close()
+    res = part2(i2) 
+    fmt.Println(res)
 }
 
+func part2(input io.Reader) int {
+    scanner := bufio.NewScanner(input)
+    res := 0
+    for scanner.Scan() {
+        mh := Hand{0,0,0}
+        line := scanner.Text()
+        game, _ := gameFromLine(line)
+        for _, h := range game.Hands {
+            if h.green > mh.green {
+                mh.green = h.green
+            }
+            if h.blue > mh.blue {
+                mh.blue = h.blue
+            }
+            if h.red > mh.red {
+                mh.red = h.red
+            }
+        }
+        pow := mh.red * mh.blue * mh.green
+        res += pow
+    }
+    return res
+}
 func day02(maximum Hand, input io.Reader) (int, error) {
     scanner := bufio.NewScanner(input)
     res := 0
